@@ -187,10 +187,16 @@ def load():
 def main(is_new):
     global mines
     if (is_new):
-        print("Введите размер поля\n")
+        print("Введите размер поля")
         gridsize = int(input())
-        print("Введите количество мин\n")
-        numMines = int(input())
+        correct = True
+        while correct:
+            print("Введите количество мин")
+            numMines = int(input())
+            if 0 < numMines < gridsize**2:
+                correct = False
+            else:
+                print("Вы ввели некоректное количество мин попробуйте еще раз")
         currgrid = [[' ' for _ in range(gridsize)] for _ in range(gridsize)]
         grid = []
         flags = []
@@ -206,7 +212,7 @@ def main(is_new):
     print(helpless + " Напишите 'help' чтобы увидеть это сообщение еще раз.\n")
     while True:
         left = numMines - len(flags)
-        prompt = input('Enter the cell ({} mines left): '.format(left))
+        prompt = input('Введите ячейку ({} мин осталось): '.format(left))
         result = in_data(prompt, gridsize, helpless + '\n')
         if result == 1:
             if not grid:
