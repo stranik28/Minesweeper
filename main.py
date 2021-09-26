@@ -200,6 +200,8 @@ def load():
             flag = list(map(eval,string_flag[:-1].split(" ")))
         else:
             flag = [(int(string_flag[0]),int(string_flag[2]))]
+    else:
+        flag = []
 
     if (len(numbmines)) > 4:
         numbmines = list(map(eval, numbmines[:-1].split(" ")))
@@ -305,6 +307,5 @@ print("Введите load чтобы загрузить сохранённую 
 start = input()
 if start == "load":
     main(False)
-
 else:
     main(True)
