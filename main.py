@@ -114,7 +114,7 @@ def playagain():
 def in_data(inputstring, gridsize, helpmessage):
     cell = ()
     flag = False
-    message = "Invalid cell. " + helpmessage
+    message = "Неккоректная ячейка. " + helpmessage
 
     pattern = r'([a-{}])([0-9]+)(f?)'.format(ascii_lowercase[gridsize - 1])
     validinput = re.match(pattern, inputstring)
@@ -215,11 +215,19 @@ def main(is_new):
     global mines
 
     if (is_new):
-        print("Введите размер поля")
-        gridsize = int(input())
         correct = True
         while correct:
-            print("Введите количество мин")
+            print("Введите размер поля (от 2 клеток)")
+            gridsize = int(input())
+            if 2 < gridsize:
+                correct = False
+            else:
+                print("Вы ввели некоректный размер поля попробуйте еще раз")
+
+        correct = True
+
+        while correct:
+            print("Введите количество мин (от 2 мин)")
             numMines = int(input())
             if 0 < numMines < gridsize**2:
                 correct = False
