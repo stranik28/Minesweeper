@@ -3,9 +3,12 @@ import re
 from string import ascii_lowercase
 from cryptography.fernet import Fernet
 
+# Ключ для шифрования/дешифрования файла сохранения игры
+
 cipher_key = "HgSztes5-wt3yM04qm4fmy6vGEY1zgczn_EAy612N1g="
 cipher_key = str.encode(cipher_key)
 
+# Функция для начального заполнения игрового поля
 
 def setupgrid(gridsize, start, numberofmines):
     emptygrid = [['0' for _ in range(gridsize)] for _ in range(gridsize)]
@@ -16,8 +19,10 @@ def setupgrid(gridsize, start, numberofmines):
     grid = getnumbers(emptygrid)
     return grid, mines
 
+# Функция для отображения игрового поля
 
 def showgrid(grid):
+
     gridsize = len(grid)
     horizontal = '   ' + (4 * gridsize * '-') + '-'
     toplabel = '     '
@@ -35,6 +40,7 @@ def showgrid(grid):
 
     print('')
 
+# Функция генерации случайных коардинат
 
 def getrandomcell(grid):
     gridsize = len(grid)
@@ -42,10 +48,13 @@ def getrandomcell(grid):
     b = random.randint(0, gridsize - 1)
     return a, b
 
+# Функция получения соседей клетки
 
 def getneighbors(grid, rowno, colno):
+
     gridsize = len(grid)
     neighbors = []
+
     for i in range(-1, 2):
         for j in range(-1, 2):
             if i == 0 and j == 0:
@@ -54,8 +63,10 @@ def getneighbors(grid, rowno, colno):
                 neighbors.append((rowno + i, colno + j))
     return neighbors
 
+# Функция заполнения массива mines коардинатами мин
 
 def getmines(grid, start, numberofmines):
+
     mines = []
     neighbors = getneighbors(grid, *start)
 
@@ -67,8 +78,10 @@ def getmines(grid, start, numberofmines):
 
     return mines
 
+# Заполнение ячеек grid
 
 def getnumbers(grid):
+
     for rowno, row in enumerate(grid):
         for colno, cell in enumerate(row):
             if cell != 'X':
@@ -79,12 +92,14 @@ def getnumbers(grid):
     return grid
 
 
-def show(grid, currgrid, rowno, colno):
-    if currgrid[rowno][colno] != ' ':
+def show(grid, currgrid, row_numb, colno):
+
+    if currgrid[row_numb][colno] != ' ':
         return
-    currgrid[rowno][colno] = grid[rowno][colno]
-    if grid[rowno][colno] == '0':
-        for r, c in getneighbors(grid, rowno, colno):
+
+    currgrid[row_numb][colno] = grid[row_numb][colno]
+    if grid[row_numb][colno] == '0':
+        for r, c in getneighbors(grid, row_numb, colno):
             if currgrid[r][c] != 'F':
                 show(grid, currgrid, r, c)
 
@@ -94,6 +109,7 @@ def playagain():
 
     return choice.lower() == 'y'
 
+# Функция обработки введенных данных
 
 def in_data(inputstring, gridsize, helpmessage):
     cell = ()
@@ -119,6 +135,7 @@ def in_data(inputstring, gridsize, helpmessage):
 
     return {'cell': cell, 'flag': flag, 'message': message}
 
+# Функция сохранения игры
 
 def save(grid, currgrid, gridsize, mines, flags):
     cipher = Fernet(cipher_key)
@@ -126,6 +143,7 @@ def save(grid, currgrid, gridsize, mines, flags):
     string_currgrid = ""
     string_flag = ""
     string_mines = ""
+
     for q in grid:
         for a in q:
             string_grid += a
@@ -138,12 +156,14 @@ def save(grid, currgrid, gridsize, mines, flags):
         string_mines += str(mines[i][0])+","+str(mines[i][1]) + " "
     if string_flag == '':
         string_flag += "0"
+
     string_grid = str.encode(string_grid + "@")
     string_currgrid = str.encode(string_currgrid + "@")
     flag = str.encode(string_flag+"@")
     string_mines = str.encode(str(string_mines))
     fil = string_grid + string_currgrid + flag + string_mines
     ecript = cipher.encrypt(fil)
+
     print('Введите имя партии для сохранения\n')
     name = input()
     name = name + ".txt"
@@ -151,12 +171,14 @@ def save(grid, currgrid, gridsize, mines, flags):
     file.write(ecript)
     file.close()
 
+# Функция перевода String-to-Matrix
 
 def convertToMatrix(test_str, K):
     temp = [test_str[idx: idx + K] for idx in range(0, len(test_str), K)]
     res = [list(ele) for ele in temp]
     return res
 
+# Функция загрузки сохраненной игры
 
 def load():
     cipher = Fernet(cipher_key)
@@ -168,6 +190,7 @@ def load():
     fil = cipher.decrypt(q)
     fil = fil.decode()
     size,string_grid, string_currgrid,string_flag,numbmines = fil.split("@")
+
     size = int(size)
     grid = convertToMatrix(string_grid, size)
     currgrid = convertToMatrix(string_currgrid, size)
@@ -177,15 +200,18 @@ def load():
             flag = list(map(eval,string_flag[:-1].split(" ")))
         else:
             flag = [(int(string_flag[0]),int(string_flag[2]))]
+
     if (len(numbmines)) > 4:
         numbmines = list(map(eval, numbmines[:-1].split(" ")))
     else:
         numbmines = [(int(numbmines[0]), int(numbmines[2]))]
+
     return grid, currgrid, size, flag, numbmines
 
 
 def main(is_new):
     global mines
+
     if (is_new):
         print("Введите размер поля")
         gridsize = int(input())
@@ -197,6 +223,7 @@ def main(is_new):
                 correct = False
             else:
                 print("Вы ввели некоректное количество мин попробуйте еще раз")
+
         currgrid = [[' ' for _ in range(gridsize)] for _ in range(gridsize)]
         grid = []
         flags = []
@@ -215,6 +242,7 @@ def main(is_new):
         left = numMines - len(flags)
         prompt = input('Введите ячейку ({} мин осталось): '.format(left))
         result = in_data(prompt, gridsize, helpless + '\n')
+
         if result == 1:
             if not grid:
                 print("Сначала сделайте первый ход\n")
@@ -227,6 +255,7 @@ def main(is_new):
 
             if cell:
                 print('\n\n')
+
                 row_numb, colno = cell
                 currcell = currgrid[row_numb][colno]
                 flag = result['flag']
