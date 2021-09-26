@@ -227,7 +227,7 @@ def main(is_new):
         correct = True
 
         while correct:
-            print("Введите количество мин (от 2 мин)")
+            print("Введите количество мин (от 1 мины)")
             numMines = int(input())
             if 0 < numMines < gridsize**2:
                 correct = False
